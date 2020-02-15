@@ -1,5 +1,6 @@
-package bg.sofia.uni.fmi.mjt.torrent;
+package bg.sofia.uni.fmi.mjt.torrent.server;
 
+import bg.sofia.uni.fmi.mjt.torrent.server.TorrentServer;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;

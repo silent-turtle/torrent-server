@@ -1,4 +1,4 @@
-package bg.sofia.uni.fmi.mjt.torrent;
+package bg.sofia.uni.fmi.mjt.torrent.client;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

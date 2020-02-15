@@ -1,4 +1,6 @@
-package bg.sofia.uni.fmi.mjt.torrent;
+package bg.sofia.uni.fmi.mjt.torrent.client;
+
+import bg.sofia.uni.fmi.mjt.torrent.client.TorrentClient;
 
 import java.io.IOException;
 import java.nio.channels.SocketChannel;

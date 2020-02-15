@@ -1,4 +1,4 @@
-package bg.sofia.uni.fmi.mjt.torrent;
+package bg.sofia.uni.fmi.mjt.torrent.client;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -6,7 +6,6 @@ import org.mockito.Mockito;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.channels.SocketChannel;
