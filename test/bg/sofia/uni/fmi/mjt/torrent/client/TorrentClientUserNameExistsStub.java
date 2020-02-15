@@ -17,7 +17,7 @@ public class TorrentClientUserNameExistsStub extends TorrentClientStub {
 
     @Override
     public String sendNameCheck(String name) throws IOException {
-        return "Nickname already exists." + System.lineSeparator();
+        return "Nickname already exists.";
     }
 
 }

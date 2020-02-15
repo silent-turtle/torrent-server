@@ -1,5 +1,7 @@
 package bg.sofia.uni.fmi.mjt.torrent.server;
 
+import bg.sofia.uni.fmi.mjt.torrent.server.command.CommandFactory;
+
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
@@ -20,7 +22,7 @@ public class TorrentServer {
     private Map<String, Set<Path>> files = new HashMap<>();
     private Map<String, InetSocketAddress> users = new HashMap<>();
     private ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
-    public SocketChannel userSocketChannel;
+    private SocketChannel userSocketChannel;
     private Selector selector;
     private ServerSocketChannel serverSocketChannel;
 
@@ -61,7 +63,7 @@ public class TorrentServer {
                         torrentServer.sendMessage(reply);
 
 
-                        if (reply.equals("Disconnected." + System.lineSeparator())) {
+                        if (reply.equals("Disconnected.")) {
                             key.cancel();
                             torrentServer.userSocketChannel.close();
                         }
@@ -86,7 +88,7 @@ public class TorrentServer {
 
     public void sendMessage(String message) throws IOException {
         if (userSocketChannel == null) {
-            throw new ConnectException("No connection." + System.lineSeparator());
+            throw new ConnectException("No connection.");
         }
 
         if (message.equals("")) {
@@ -102,7 +104,7 @@ public class TorrentServer {
 
     public String readMessage() throws IOException {
         if (userSocketChannel == null) {
-            throw new ConnectException("No connection." + System.lineSeparator());
+            throw new ConnectException("No connection.");
         }
 
         buffer.clear();
@@ -114,132 +116,10 @@ public class TorrentServer {
     }
 
     public String handleCommand(String command) {
-        String[] split = command.split("\\s+|" + System.lineSeparator(), 3);
-
-        if (split[0].equals("register")) {
-            return executeRegisterCommand(command);
-        }
-        if (split[0].equals("unregister")) {
-            return executeUnregisterCommand(command);
-        }
-        if (split[0].equals("list-files")) {
-            return executeListFilesCommand();
-        }
-        if (split[0].equals("list-users")) {
-            return executeListUsersCommand();
-        }
-        if (split[0].equals("update")) {
-            return executeUpdateCommand(split);
-        }
-        if (split[0].equals("name-check")) {
-            return executeNameCheckCommand(split[1]);
-        }
-        if (split[0].equals("file-check")) {
-            return executeFileCheckCommand(split);
-        }
-        if (split[0].equals("disconnect")) {
-            return executeDisconnectCommand(split[1]);
-        }
-
-        return "Wrong command." + System.lineSeparator();
+       return CommandFactory.getCommand(this, command).executeCommand();
     }
 
-    private String executeDisconnectCommand(String s) {
-        users.remove(s);
-        files.remove(s);
-        return "Disconnected." + System.lineSeparator();
-    }
-
-    private String executeRegisterCommand(String command) {
-        String[] split = command.split("\\s+|" + System.lineSeparator(), 3);
-        String name = split[1];
-
-        addFiles(split[2], name);
-        addUser(name);
-
-        return "Files registered." + System.lineSeparator();
-    }
-
-    private String executeUnregisterCommand(String command) {
-        String[] split = command.split("\\s+|" + System.lineSeparator(), 3);
-        String name = split[1];
-
-        String[] fileNames = split[2].split("\\s*,\\s*|" + System.lineSeparator());
-
-        Set<Path> userFiles = files.get(name);
-
-        if (userFiles == null || userFiles.size() == 0) {
-            return "No files." + System.lineSeparator();
-        }
-
-        for (int i = 0; i < fileNames.length; ++i) {
-            if (!userFiles.contains(Path.of(fileNames[i]))) {
-                return "No such file(s)." + System.lineSeparator();
-            }
-            userFiles.remove(Path.of(fileNames[i]));
-        }
-
-        return "Unregistered files." + System.lineSeparator();
-    }
-
-    private String executeListFilesCommand() {
-        StringBuilder result = new StringBuilder();
-        for (Map.Entry<String, Set<Path>> elem : files.entrySet()) {
-            for (Path path : elem.getValue()) {
-                result.append(elem.getKey()).append(" : ").
-                        append(path.toAbsolutePath().toString()).append(System.lineSeparator());
-            }
-        }
-
-        return result.toString();
-    }
-
-    private String executeListUsersCommand() {
-        StringBuilder result = new StringBuilder();
-        for (Map.Entry<String, InetSocketAddress> elem : users.entrySet()) {
-            result.append(elem.getKey()).append(" ").append(elem.getValue().getAddress())
-                    .append(" ").append(elem.getValue().getPort()).append(System.lineSeparator());
-        }
-
-        return result.toString();
-    }
-
-    private String executeUpdateCommand(String[] split) {
-        String oldNickname = split[1];
-        String newNickname = split[2];
-
-        users.put(newNickname, users.get(oldNickname));
-        users.remove(oldNickname);
-
-        files.put(newNickname, files.get(oldNickname));
-        files.remove(oldNickname);
-
-        return "Nickname updated successfully." + System.lineSeparator();
-    }
-
-    private String executeNameCheckCommand(String s) {
-        if (users.containsKey(s)) {
-            return "Nickname already exists." + System.lineSeparator();
-        }
-        return "Nickname doesn't exist." + System.lineSeparator();
-    }
-
-
-    private String executeFileCheckCommand(String[] split) {
-        if (!files.containsKey(split[1])) {
-            return "User doesn't exist." + System.lineSeparator();
-        }
-
-        Set<Path> userFiles = files.get(split[1]);
-
-        if (!userFiles.contains(Path.of(split[2]))) {
-            return "File is not registered." + System.lineSeparator();
-        }
-
-        return "File is registered." + System.lineSeparator();
-    }
-
-    private void addUser(String name) {
+    public void addUser(String name) {
         boolean isRegistered = false;
 
         for (String user : users.keySet()) {
@@ -255,8 +135,7 @@ public class TorrentServer {
         }
     }
 
-    private void addFiles(String fileNames, String name) {
-        String[] fileSplit = fileNames.split("\\s*,\\s*|" + System.lineSeparator());
+    public void addFiles(Set<String> fileNames, String name) {
         Set<Path> userFiles = files.get(name);
         Set<Path> temp;
         if (userFiles == null) {
@@ -265,8 +144,8 @@ public class TorrentServer {
             temp = userFiles;
         }
 
-        for (int i = 0; i < fileSplit.length; ++i) {
-            Path path = Path.of(fileSplit[i]);
+        for (String file : fileNames) {
+            Path path = Path.of(file);
             temp.add(path);
         }
         if (userFiles == null) {

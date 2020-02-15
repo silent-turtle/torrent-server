@@ -18,16 +18,16 @@ public class TorrentClientStub extends TorrentClient {
 
     @Override
     public String sendRegister(String command) throws IOException {
-        return "Files registered." + System.lineSeparator();
+        return "Files registered.";
     }
 
     @Override
     public String sendUpdateName(String name, String old) throws IOException {
-        return "Nickname updated successfully." + System.lineSeparator();
+        return "Nickname updated successfully.";
     }
 
     @Override
     public String sendNameCheck(String name) throws IOException {
-        return "Nickname doesn't exist." + System.lineSeparator();
+        return "Nickname doesn't exist.";
     }
 }

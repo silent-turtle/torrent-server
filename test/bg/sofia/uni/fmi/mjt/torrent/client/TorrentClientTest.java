@@ -61,7 +61,7 @@ public class TorrentClientTest {
     public void testRegisterWithValidFile() throws IOException, NicknameAlreadyExistsException {
         TorrentClientStub torrentClientStub = new TorrentClientStub();
 
-        String expected = "Files registered." + System.lineSeparator();
+        String expected = "Files registered.";
 
 
         String reply = torrentClientStub.handleCommand(command);

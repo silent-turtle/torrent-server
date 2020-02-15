@@ -2,7 +2,6 @@ package bg.sofia.uni.fmi.mjt.torrent.client;
 
 import java.io.*;
 import java.net.ConnectException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
@@ -52,7 +51,7 @@ public class TorrentClient {
                     String reply = torrentClient.handleCommand(message);
                     System.out.println(reply);
 
-                    if (reply.equals("Disconnected." + System.lineSeparator())) {
+                    if (reply.equals("Disconnected.")) {
                         Files.deleteIfExists(path);
                         torrentClient.stop();
                         break;
@@ -92,7 +91,7 @@ public class TorrentClient {
 
     public void sendMessage(String message) throws IOException {
         if (client == null) {
-            throw new ConnectException("No connection." + System.lineSeparator());
+            throw new ConnectException("No connection.");
         }
 
         serverBuffer.clear();
@@ -105,7 +104,7 @@ public class TorrentClient {
 
     public String readMessage() throws IOException {
         if (client == null) {
-            throw new ConnectException("No connection." + System.lineSeparator());
+            throw new ConnectException("No connection.");
         }
 
         serverBuffer.clear();
@@ -140,7 +139,7 @@ public class TorrentClient {
         for (String file : fileSplit) {
             if (!Files.exists(Path.of(file))) {
                 throw new FileNotFoundException("File " + file +
-                        " doesn't exist." + System.lineSeparator());
+                        " doesn't exist.");
             }
         }
 
@@ -155,16 +154,16 @@ public class TorrentClient {
             return readMessage();
         }
 
-        return "Wrong command." + System.lineSeparator();
+        return "Wrong command.";
     }
 
     private void updateNickname(String name) throws IOException, NicknameAlreadyExistsException {
         if (nickname == null) {
             String reply = sendNameCheck(name);
 
-            if (reply.equals("Nickname already exists." + System.lineSeparator())) {
+            if (reply.equals("Nickname already exists.")) {
                 throw new NicknameAlreadyExistsException("Cannot use " +
-                        "this nickname." + System.lineSeparator());
+                        "this nickname.");
             }
 
             nickname = name;
@@ -174,15 +173,15 @@ public class TorrentClient {
         if (nickname.equals(localFileName)) {
             String reply = sendNameCheck(name);
 
-            if (reply.equals("Nickname already exists." + System.lineSeparator())) {
+            if (reply.equals("Nickname already exists.")) {
                 throw new NicknameAlreadyExistsException("Cannot use " +
-                        "this nickname." + System.lineSeparator());
+                        "this nickname.");
             }
 
             String old = nickname;
             reply = sendUpdateName(name, old);
 
-            if (reply.equals("Nickname updated successfully." + System.lineSeparator())) {
+            if (reply.equals("Nickname updated successfully.")) {
                 nickname = name;
                 return;
             }
@@ -194,7 +193,7 @@ public class TorrentClient {
 
         if (!nickname.equals(name)) {
             throw new NicknameAlreadyExistsException("Cannot use " +
-                    "this nickname." + System.lineSeparator());
+                    "this nickname.");
         }
     }
 
@@ -216,8 +215,8 @@ public class TorrentClient {
 
         sendMessage("file-check " + split[1] + " " + split[2]);
         String reply = readMessage();
-        if (reply.equals("File is not registered." + System.lineSeparator())
-                || reply.equals("User doesn't exist." + System.lineSeparator())) {
+        if (reply.equals("File is not registered.")
+                || reply.equals("User doesn't exist.")) {
             throw new IllegalArgumentException(reply);
         }
 
@@ -244,7 +243,7 @@ public class TorrentClient {
         }
         peer.close();
 
-        return "File downloaded successfully.\n";
+        return "File downloaded successfully.";
     }
 
     private InetSocketAddress getInetSocketAddress(String string) throws
@@ -256,7 +255,7 @@ public class TorrentClient {
 
         if (user.equals("")) {
             throw new IllegalArgumentException("User " + string +
-                    " doesn't exist." + System.lineSeparator());
+                    " doesn't exist.");
         }
         String[] split = user.split("\\s+|" + System.lineSeparator());
 
@@ -266,7 +265,7 @@ public class TorrentClient {
     private void getFile(String pathname) throws IOException {
         if (Files.exists(Path.of(pathname))) {
             throw new FileAlreadyExistsException("File " + pathname +
-                    " already exists." + System.lineSeparator());
+                    " already exists.");
         }
         File file = new File(pathname);
         BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));

@@ -1,6 +1,5 @@
 package bg.sofia.uni.fmi.mjt.torrent.server;
 
-import bg.sofia.uni.fmi.mjt.torrent.server.TorrentServer;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -91,7 +90,7 @@ public class TorrentServerTest {
 
         torrentServer.handleCommand(command);
         String reply = torrentServer.handleCommand(command);
-        String expected = "No files." + System.lineSeparator();
+        String expected = "No files.";
 
         assertEquals(expected, reply);
     }
@@ -102,7 +101,7 @@ public class TorrentServerTest {
         String command = "unregister " + userName + " " + otherFilename;
 
         String reply = torrentServer.handleCommand(command);
-        String expected = "No such file(s)." + System.lineSeparator();
+        String expected = "No such file(s).";
 
         assertEquals(expected, reply);
     }
@@ -147,7 +146,7 @@ public class TorrentServerTest {
         String command = "name-check " + userName;
 
         String reply = torrentServer.handleCommand(command);
-        String expected = "Nickname already exists." + System.lineSeparator();
+        String expected = "Nickname already exists.";
 
         assertEquals(expected, reply);
     }
@@ -159,7 +158,7 @@ public class TorrentServerTest {
         String command = "name-check " + name;
 
         String reply = torrentServer.handleCommand(command);
-        String expected = "Nickname doesn't exist." + System.lineSeparator();
+        String expected = "Nickname doesn't exist.";
 
         assertEquals(expected, reply);
     }
@@ -169,7 +168,7 @@ public class TorrentServerTest {
         String command = "file-check " + userName + " " + filename;
 
         String reply = torrentServer.handleCommand(command);
-        String expected = "File is registered." + System.lineSeparator();
+        String expected = "File is registered.";
 
         assertEquals(expected, reply);
     }
@@ -180,7 +179,7 @@ public class TorrentServerTest {
         String command = "file-check " + userName + " " + otherFilename;
 
         String reply = torrentServer.handleCommand(command);
-        String expected = "File is not registered." + System.lineSeparator();
+        String expected = "File is not registered.";
 
         assertEquals(expected, reply);
     }
@@ -191,7 +190,7 @@ public class TorrentServerTest {
         String command = "file-check " + otherUserName + " " + filename;
 
         String reply = torrentServer.handleCommand(command);
-        String expected = "User doesn't exist." + System.lineSeparator();
+        String expected = "User doesn't exist.";
 
         assertEquals(expected, reply);
     }
@@ -201,7 +200,7 @@ public class TorrentServerTest {
         String command = "random";
 
         String reply = torrentServer.handleCommand(command);
-        String expected = "Wrong command." + System.lineSeparator();
+        String expected = "Wrong command.";
 
         assertEquals(expected, reply);
     }
